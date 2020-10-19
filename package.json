@@ -13,6 +13,6 @@
     "electron-packager": "^15.1.0"
   },
   "dependencies": {
-    "custom-electron-titlebar": "^3.2.5"
+    "discord-rich-presence": "0.0.8"
   }
 }

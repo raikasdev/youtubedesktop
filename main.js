@@ -1,5 +1,7 @@
 const { app, BrowserWindow, Menu, MenuItem } = require('electron')
-
+const client = require('discord-rich-presence')('767787845199986739');
+let window;
+const starttime = new Date();
 function createWindow () {
   const win = new BrowserWindow({
     width: 1200,
@@ -12,12 +14,14 @@ function createWindow () {
     show: false,
     icon: "icons/logo.ico"
   })
-  win.webContents.on('did-finish-load',()=>{
-    console.log(win.webContents)
-    win.setTitle("YouTube Desktop by @raikasdev")
-  })
+  window = win;
   win.once('ready-to-show', () => {
     win.show()
+    setActivity();
+
+  setInterval(() => {
+      setActivity();
+  }, 10000);
   })
   win.loadURL('https://youtube.com', {userAgent: 'Chrome'})
   const menu = new Menu()
@@ -27,6 +31,7 @@ function createWindow () {
   menu.append(new MenuItem({ type: 'separator' }))
   menu.append(new MenuItem({ role: "reload", label: 'Reload', click() { console.log('Reloading') } }))
   win.setMenu(menu);
+  
 }
 
 app.whenReady().then(createWindow)
@@ -42,3 +47,19 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+function setActivity() {
+  let state = "In menu";
+  let details = window.title.split(" - ").length == 1 ? "YouTube" : function(){let s = window.title.split(" - ");s.pop(); return s.join(" ")}();
+  details = details.length < 2 ? "YouTube" : details; 
+  let split = window.webContents.getURL().split("/");
+  if(split[split.length-1].startsWith("watch")) {
+    state = "Watching a video"
+  }
+  client.updatePresence({
+      state: details,
+      details: state,
+      startTimestamp: starttime,
+      largeImageKey: 'yt'
+  });
+}
